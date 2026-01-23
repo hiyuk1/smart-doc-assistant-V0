@@ -17,6 +17,9 @@ venv/
 indexes/
 uploads/
 
+# Avoid committing the duplicate nested repo folder (it contains its own .git)
+smart-doc-assistant/
+
 # Keys / credentials
 *.pem
 *.ppk
