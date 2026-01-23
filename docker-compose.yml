@@ -1,0 +1,30 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+
+  api:
+    build: .
+    container_name: smart-doc-assistant-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # Inside Compose, reach Ollama by service name
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - INDEX_PATH=/code/indexes
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./indexes:/code/indexes
+      - ./uploads:/code/uploads
+    depends_on:
+      - ollama
+
+volumes:
+  ollama:

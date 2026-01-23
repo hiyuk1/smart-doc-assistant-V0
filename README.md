@@ -19,7 +19,22 @@ Build and run the API container:
 - `docker build -t smart-doc-assistant .`
 - `docker run --rm -p 8000:8000 --env-file .env smart-doc-assistant`
 
-Note: for a complete Docker setup (API + Ollama), use Docker Compose (not included yet).
+## Docker Compose (recommended)
+
+This starts both services: the API + Ollama.
+
+1) Create `.env`: copy `.env.example` → `.env`
+2) Start everything:
+   - `docker compose up -d --build`
+3) Pull models inside the Ollama container (first time only):
+   - `docker exec -it ollama ollama pull llama3.2:1b`
+   - `docker exec -it ollama ollama pull nomic-embed-text`
+4) Open:
+   - `http://localhost:8000/docs`
+
+Notes:
+- `indexes/` and `uploads/` are mounted as volumes to persist data.
+- Ollama models are stored in a Docker named volume (`ollama`).
 
 ## GitHub safety
 
