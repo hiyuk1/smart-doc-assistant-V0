@@ -84,6 +84,9 @@ async def ask_question(request: QueryRequest):
         # LLM + retrieval are blocking; don't freeze the whole server.
         answer = await run_in_threadpool(load_index_and_ask, request.filename, request.question)
         return {"answer": answer, "source": request.filename}
+    except RuntimeError as e:
+        # Typically used for Ollama out-of-memory or other runtime issues.
+        raise HTTPException(status_code=503, detail=str(e))
     except FileNotFoundError:
         base = os.getenv("INDEX_PATH", "indexes")
         docs = []

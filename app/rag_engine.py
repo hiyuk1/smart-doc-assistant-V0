@@ -35,12 +35,13 @@ def _llm():
     from langchain_ollama import ChatOllama
 
     return ChatOllama(
-        model=os.getenv("OLLAMA_CHAT_MODEL", "llama3.2:1b"),
+        # Default kept small for low-RAM deploys (e.g. EC2 t2.micro).
+        model=os.getenv("OLLAMA_CHAT_MODEL", "qwen2.5:0.5b"),
         base_url=_ollama_base_url(),
         temperature=0,
         # Keep generations bounded so Swagger doesn't sit loading forever.
         num_predict=int(os.getenv("OLLAMA_NUM_PREDICT", "256")),
-        num_ctx=int(os.getenv("OLLAMA_NUM_CTX", "2048")),
+        num_ctx=int(os.getenv("OLLAMA_NUM_CTX", "1024")),
         keep_alive=os.getenv("OLLAMA_KEEP_ALIVE", "5m"),
         sync_client_kwargs={"timeout": float(os.getenv("OLLAMA_TIMEOUT", "120"))},
         async_client_kwargs={"timeout": float(os.getenv("OLLAMA_TIMEOUT", "120"))},
@@ -130,5 +131,16 @@ def load_index_and_ask(file_id: str, query: str) -> str:
         f"Contexto:\n{context}"
     )
 
-    response = _llm().invoke(prompt)
-    return getattr(response, "content", str(response))
+    try:
+        response = _llm().invoke(prompt)
+        return getattr(response, "content", str(response))
+    except Exception as e:
+        msg = str(e)
+        # Ollama returns this when the model doesn't fit in RAM.
+        if "requires more system memory" in msg or "not enough system memory" in msg:
+            raise RuntimeError(
+                "Ollama ficou sem memória para carregar o modelo. "
+                "Use um modelo menor (ex: OLLAMA_CHAT_MODEL=qwen2.5:0.5b) "
+                "ou aumente a RAM/swap da máquina."
+            ) from e
+        raise

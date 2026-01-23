@@ -5,7 +5,8 @@ import time
 import httpx
 
 BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434").rstrip("/")
-MODELS = sys.argv[1:] or ["llama3", "nomic-embed-text"]
+# Default kept small for low-RAM environments.
+MODELS = sys.argv[1:] or ["qwen2.5:0.5b", "nomic-embed-text"]
 
 
 def pull_model(model: str) -> None:
