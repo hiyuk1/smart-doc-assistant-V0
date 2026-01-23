@@ -1,0 +1,1 @@
+# Diretório App como um pacote Python
