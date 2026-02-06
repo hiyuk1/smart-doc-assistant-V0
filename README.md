@@ -2,6 +2,10 @@
 
 FastAPI API that ingests PDFs and answers questions using RAG (retrieval + LLM).
 
+## DISCLAIMER
+
+This is a prototype and newer versions will be released eventually.
+
 ## Local run (Windows)
 
 1) Create `.env` (optional): copy `.env.example` → `.env`.
