@@ -2,7 +2,7 @@
 
 FastAPI API that ingests PDFs and answers questions using RAG (retrieval + LLM).
 
-## DISCLAIMER
+## Disclaimer
 
 This is a prototype and newer versions will be released eventually.
 
